@@ -13,7 +13,7 @@ class bcolors:
     DANGER = '\033[91m'
     ENDC = '\033[0m'
     BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+    UNDERLINE = '\033[4m' 
 
 class ChatBot():
     def __init__(self):
@@ -38,11 +38,13 @@ class ChatBot():
             return text
         except sr.RequestError as e:
             print("404 -> Could not request results; {0}".format(e))
+            return text
 
         except sr.UnknownValueError:
             print("404 -> Unknown error occurred")
+            return text
 
-    def text_to_speech(text):
+    def text_to_speech(self,text):
         print("AI -> ", text)
         speaker = pyttsx3.init()
         voice = speaker.getProperty('voices')
@@ -50,11 +52,11 @@ class ChatBot():
         speaker.say(text)
         speaker.runAndWait()
 
+
 if __name__ == "__main__":
     ai = ChatBot()
     nlp = transformers.pipeline("conversational", model="microsoft/DialoGPT-medium")
     os.environ["TOKENIZERS_PARALLELISM"] = "true"
-    ex=True
 
     while True:
         ai.text_to_speech("Do you want to chat or speak with me?")
@@ -65,16 +67,15 @@ if __name__ == "__main__":
             print("AI -> Great what's on your mind?")
             while True:
                 inp = input("Me -> ")
-                if any(i in inp for i in ["quit","exit","shut down"]):
-                    print("Bye bye!")
+                if any(i in inp for i in ["quit","exit","close","shut down","bye"]):
                     break
                 elif any(i in inp for i in ["your name","who are you"]):
-                    print("I'm " + ai.get_name())
+                    print("AI -> I'm " + ai.get_name())
                 else:
                     chat = nlp(transformers.Conversation(inp), pad_token_id=50256)
                     res = str(chat)
                     res = res[res.find("bot >> ")+6:].strip()
-                    print(res)
+                    print("AI -> " + res)
         elif action == 2:
             ai.text_to_speech("What do you want to call me?")
             while True:
@@ -90,9 +91,9 @@ if __name__ == "__main__":
                 if any(i in res for i in ["thank","thanks"]):
                     res = np.random.choice(["you're welcome!","anytime!","no problem!","cool!","I'm here if you need me!","mention not"])
                 elif any(i in res for i in ["your name","who are you"]):
-                    print("I'm " + ai.get_name())
-                elif any(i in res for i in ["exit","close"]):
-                    res = np.random.choice(["Tata","Have a good day","Bye","Goodbye","Hope to meet soon","peace out!"])
+                    res = "I'm " + ai.get_name()
+                    ai.text_to_speech(res)
+                elif any(i in res for i in ["exit","close","quit","bye"]):
                     break
                 else:   
                     if res=="Error":
@@ -102,4 +103,7 @@ if __name__ == "__main__":
                         res = str(chat)
                         res = res[res.find("bot >> ")+6:].strip()
                         ai.text_to_speech(res)
+        res = np.random.choice(["Tata","Have a good day","Bye","Goodbye","Hope to meet soon","peace out!"])
+        ai.text_to_speech(res)
+        break
             
