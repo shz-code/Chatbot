@@ -52,6 +52,12 @@ class ChatBot():
         speaker.say(text)
         speaker.runAndWait()
 
+    def chat(self,text):
+        converse = nlp(transformers.Conversation(text), pad_token_id=50256)
+        res = str(converse)
+        res = res[res.find("bot >> ")+6:].strip()
+        return res
+
 
 if __name__ == "__main__":
     ai = ChatBot()
@@ -60,7 +66,7 @@ if __name__ == "__main__":
 
     while True:
         ai.text_to_speech("Do you want to chat or speak with me?")
-        action = int(input("(1 to chat 2 to speak) \nMe-> "))
+        action = int(input("(1 to chat 2 to speak) \nMe -> "))
         if action == 1:
             inp = input("AI -> What do you want to call me?\nMe -> ")
             ai.set_name(name=inp)
@@ -72,10 +78,8 @@ if __name__ == "__main__":
                 elif any(i in inp for i in ["your name","who are you"]):
                     print("AI -> I'm " + ai.get_name())
                 else:
-                    chat = nlp(transformers.Conversation(inp), pad_token_id=50256)
-                    res = str(chat)
-                    res = res[res.find("bot >> ")+6:].strip()
-                    print("AI -> " + res)
+                    output = ai.chat(inp)
+                    print("AI -> " + output)
         elif action == 2:
             ai.text_to_speech("What do you want to call me?")
             while True:
@@ -99,10 +103,8 @@ if __name__ == "__main__":
                     if res=="Error":
                         res="Sorry, come again?"
                     else:
-                        chat = nlp(transformers.Conversation(res), pad_token_id=50256)
-                        res = str(chat)
-                        res = res[res.find("bot >> ")+6:].strip()
-                        ai.text_to_speech(res)
+                        output = ai.chat(res)
+                        ai.text_to_speech(output)
         res = np.random.choice(["Tata","Have a good day","Bye","Goodbye","Hope to meet soon","peace out!"])
         ai.text_to_speech(res)
         break
