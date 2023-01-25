@@ -1,30 +1,20 @@
-import speech_recognition as sr
-import pyttsx3
-import transformers
+import speech_recognition as sr     # For sppech recognition using google ai
+import pyttsx3                      # For voice output
+from transformers import pipeline, Conversation   
+                                    # For NLP model and response
 import os
-import numpy as np
-
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    DANGER = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m' 
+import numpy as np                  # To generate random choice
 
 class ChatBot():
     def __init__(self):
         print("----- Warming up -----")
-
+    # Sets Name of chatbot
     def set_name(self,name):
         self.name = name
-
+    # Retuens Name of chatbot
     def get_name(self):
         return self.name
-
+    # Converts Speech to text
     def speech_to_text(self):
         recognizer = sr.Recognizer()
         with sr.Microphone() as mic:
@@ -43,7 +33,7 @@ class ChatBot():
         except sr.UnknownValueError:
             print("404 -> Unknown error occurred")
             return text
-
+    # Converts text to speech
     def text_to_speech(self,text):
         print("AI -> ", text)
         speaker = pyttsx3.init()
@@ -51,9 +41,12 @@ class ChatBot():
         speaker.setProperty('voice', voice[1].id)
         speaker.say(text)
         speaker.runAndWait()
-
+    # Returnes NLP response
     def chat(self,text):
-        converse = nlp(transformers.Conversation(text), pad_token_id=50256)
+
+        nlp = pipeline("conversational", model="microsoft/DialoGPT-medium")
+        os.environ["TOKENIZERS_PARALLELISM"] = "true"
+        converse = nlp(Conversation(text), pad_token_id=50256)
         res = str(converse)
         res = res[res.find("bot >> ")+6:].strip()
         return res
@@ -61,12 +54,11 @@ class ChatBot():
 
 if __name__ == "__main__":
     ai = ChatBot()
-    nlp = transformers.pipeline("conversational", model="microsoft/DialoGPT-medium")
-    os.environ["TOKENIZERS_PARALLELISM"] = "true"
 
     while True:
         ai.text_to_speech("Do you want to chat or speak with me?")
         action = int(input("(1 to chat 2 to speak) \nMe -> "))
+        # If user choose to chat
         if action == 1:
             inp = input("AI -> What do you want to call me?\nMe -> ")
             ai.set_name(name=inp)
@@ -80,6 +72,7 @@ if __name__ == "__main__":
                 else:
                     output = ai.chat(inp)
                     print("AI -> " + output)
+        # If user choose to speak
         elif action == 2:
             ai.text_to_speech("What do you want to call me?")
             while True:
@@ -105,6 +98,7 @@ if __name__ == "__main__":
                     else:
                         output = ai.chat(res)
                         ai.text_to_speech(output)
+        # Good bye text
         res = np.random.choice(["Tata","Have a good day","Bye","Goodbye","Hope to meet soon","peace out!"])
         ai.text_to_speech(res)
         break
