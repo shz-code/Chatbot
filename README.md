@@ -13,17 +13,26 @@
 
 
 First clone this git repository or download zip
-```http
+```html
   git clone https://github.com/shz-code/chatbot.git
 ```
-Run pip to install all the dependencies
+Create a new virtual environment(Use Conda/ Virtual Environment) [Learn More.](https://docs.python.org/3/library/venv.html#:~:text=A%20virtual%20environment%20is%20created,the%20virtual%20environment%20are%20available.)
 
-```python
+**If virtual environment is not installed on your machine install it using below command.*
+```py
+  pip install virtualenv
+```
+Activate **virtualenv**
+```py
+  .\env\Scripts\activate  
+```
+Run pip to install all the dependencies
+```py
   pip install -r requirments.txt
 ```
 Start main.py
 
-```python
+```py
   py main.py
 ```
 
