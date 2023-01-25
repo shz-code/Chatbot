@@ -29,7 +29,7 @@ Activate **virtualenv**
 ```
 Run pip to install all the dependencies
 ```py
-  pip install -r requirments.txt
+  pip install -r requirements.txt
 ```
 Start main.py
 
