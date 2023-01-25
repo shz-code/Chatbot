@@ -24,6 +24,7 @@ Create a new virtual environment(Use Conda/ Virtual Environment) [Learn More.](h
 ```
 Activate **virtualenv**
 ```py
+   virtualenv env
   .\env\Scripts\activate  
 ```
 Run pip to install all the dependencies
